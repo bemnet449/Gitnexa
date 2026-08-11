@@ -1,37 +1,48 @@
 import type { Command } from "commander";
-import ora from "ora";
 import { CommitService } from "../services/commit.service.js";
-import { formatStagedAnalysis } from "../utils/formatter.js";
-import { logger } from "../utils/logger.js";
-import { getErrorMessage, isAppError, sanitizeErrorMessage } from "../utils/errors.js";
+import { formatAnalyzeView } from "../utils/formatter.js";
+import {
+  printAppHeader,
+  status,
+  withSpinner,
+} from "../utils/ui/index.js";
+import {
+  getErrorMessage,
+  isAppError,
+  sanitizeErrorMessage,
+} from "../utils/errors.js";
 
 export function analyzeCommand(program: Command): void {
   program
     .command("analyze")
     .description("Analyze staged Git changes")
     .action(async () => {
-      const spinner = ora("Analyzing staged changes...").start();
-
       try {
+        printAppHeader();
+
         const commitService = new CommitService();
-        const analysis = await commitService.analyze();
-        spinner.succeed(
-          analysis.files.length > 0
-            ? `${analysis.files.length} file(s) analyzed`
-            : "No staged files",
+        const analysis = await withSpinner(
+          "Analyzing staged changes...",
+          () => commitService.analyze(),
+          (result) =>
+            result.files.length > 0
+              ? `${result.files.length} file(s) analyzed`
+              : "No staged files",
+          "Analyze failed",
         );
 
-        logger.blank();
-        logger.info(formatStagedAnalysis(analysis));
+        status.blank();
+        status.info(formatAnalyzeView(analysis));
 
         if (analysis.files.length === 0) {
-          logger.blank();
-          logger.dim("Tip: stage changes with `git add` before analyzing.");
+          status.blank();
+          status.tip("stage changes with `git add` before analyzing.");
         }
+
+        status.blank();
       } catch (error) {
-        spinner.fail("Analyze failed");
         const message = sanitizeErrorMessage(getErrorMessage(error));
-        logger.error(message);
+        status.error(message);
         process.exitCode = isAppError(error) ? error.exitCode : 1;
       }
     });

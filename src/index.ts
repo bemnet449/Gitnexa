@@ -26,5 +26,5 @@ explainCommand(program);
 program.parseAsync(process.argv).catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(`✗ ${message}`);
-  process.exit(1);
+  process.exitCode = 1;
 });

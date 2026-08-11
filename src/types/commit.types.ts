@@ -25,3 +25,7 @@ export interface GeneratedCommit {
   validation: ValidationResult;
   score: ScoreResult;
 }
+
+export interface CommitCandidate extends GeneratedCommit {
+  index: number;
+}

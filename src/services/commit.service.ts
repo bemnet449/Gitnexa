@@ -1,15 +1,13 @@
-import readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
 import { GitService } from "./git.service.js";
 import { AIService } from "./ai.service.js";
 import { ScoreService } from "./score.service.js";
 import {
   buildCommitPrompt,
-  parseCommitMessageResponse,
+  parseCommitCandidates,
 } from "../prompts/commit.prompt.js";
 import { validateConventionalCommit } from "../validators/conventional-commit.validator.js";
 import { AppError } from "../utils/errors.js";
-import type { GeneratedCommit } from "../types/commit.types.js";
+import type { CommitCandidate, GeneratedCommit } from "../types/commit.types.js";
 import type { StagedAnalysis } from "../types/git.types.js";
 
 export class CommitService {
@@ -34,67 +32,56 @@ export class CommitService {
     return analysis;
   }
 
+  enrichMessage(message: string): GeneratedCommit {
+    const trimmed = message.trim();
+    if (!trimmed) {
+      throw new AppError(
+        "Commit message cannot be empty.",
+        "EMPTY_MESSAGE",
+      );
+    }
+    const validation = validateConventionalCommit(trimmed);
+    const score = this.scorer.score(trimmed);
+    return { message: trimmed, validation, score };
+  }
+
+  /**
+   * Generate exactly 3 commit message candidates, each locally validated and scored.
+   */
+  async generateCommitCandidates(
+    analysis?: StagedAnalysis,
+  ): Promise<CommitCandidate[]> {
+    const staged = analysis ?? (await this.requireStagedChanges());
+    const prompt = buildCommitPrompt(staged);
+    const response = await this.ai.generate(prompt, { temperature: 0.4 });
+    const messages = parseCommitCandidates(response.text);
+
+    return messages.map((message, index) => {
+      const enriched = this.enrichMessage(message);
+      return { index, ...enriched };
+    });
+  }
+
+  /** @deprecated Prefer generateCommitCandidates. Returns the first candidate. */
   async generateCommitMessage(
     analysis?: StagedAnalysis,
   ): Promise<GeneratedCommit> {
-    const staged = analysis ?? (await this.requireStagedChanges());
-    const prompt = buildCommitPrompt(staged);
-    const response = await this.ai.generate(prompt, { temperature: 0.2 });
-    const message = parseCommitMessageResponse(response.text);
-
-    if (!message) {
+    const candidates = await this.generateCommitCandidates(analysis);
+    const first = candidates[0];
+    if (!first) {
       throw new AppError(
         "AI returned an invalid empty commit message.",
         "INVALID_AI_RESPONSE",
       );
     }
-
-    const validation = validateConventionalCommit(message);
-    const score = this.scorer.score(message);
-
-    return { message, validation, score };
-  }
-
-  async confirm(question: string): Promise<boolean> {
-    const rl = readline.createInterface({ input, output });
-    try {
-      const answer = (await rl.question(question)).trim().toLowerCase();
-      if (!answer || answer === "y" || answer === "yes") {
-        return true;
-      }
-      return false;
-    } finally {
-      rl.close();
-    }
+    return {
+      message: first.message,
+      validation: first.validation,
+      score: first.score,
+    };
   }
 
   async createCommit(message: string): Promise<string> {
     return this.git.createCommit(message);
-  }
-
-  async runCommitWorkflow(options: {
-    onAnalyzing?: () => void;
-    onAnalyzed?: (analysis: StagedAnalysis) => void;
-    onGenerating?: () => void;
-    onGenerated?: (result: GeneratedCommit) => void;
-    skipConfirm?: boolean;
-  } = {}): Promise<{ committed: boolean; hash?: string; message: string }> {
-    options.onAnalyzing?.();
-    const analysis = await this.requireStagedChanges();
-    options.onAnalyzed?.(analysis);
-
-    options.onGenerating?.();
-    const generated = await this.generateCommitMessage(analysis);
-    options.onGenerated?.(generated);
-
-    if (!options.skipConfirm) {
-      const confirmed = await this.confirm("Create this commit? (Y/n) ");
-      if (!confirmed) {
-        return { committed: false, message: generated.message };
-      }
-    }
-
-    const hash = await this.createCommit(generated.message);
-    return { committed: true, hash, message: generated.message };
   }
 }

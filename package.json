@@ -46,6 +46,7 @@
   "homepage": "https://github.com/gitsense/gitsense#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@inquirer/prompts": "^8.5.2",
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
     "dotenv": "^17.4.2",

@@ -1,75 +1,92 @@
 import type { Command } from "commander";
-import ora from "ora";
-import chalk from "chalk";
 import { CommitService } from "../services/commit.service.js";
 import {
-  formatCommitMessage,
-  formatScore,
-  formatValidation,
+  formatCommitSummaryPanel,
+  formatSelectedCommitPanel,
 } from "../utils/formatter.js";
-import { logger } from "../utils/logger.js";
+import {
+  confirmAction,
+  printAppHeader,
+  selectOption,
+  status,
+  withSpinner,
+} from "../utils/ui/index.js";
 import {
   getErrorMessage,
   isAppError,
   sanitizeErrorMessage,
 } from "../utils/errors.js";
+import type { CommitCandidate } from "../types/commit.types.js";
 
 export function commitCommand(program: Command): void {
   program
     .command("commit")
-    .description("Generate an AI Conventional Commit from staged changes")
+    .description("Generate AI Conventional Commit candidates from staged changes")
     .action(async () => {
       const commitService = new CommitService();
-      const analyzeSpinner = ora("Analyzing staged changes...").start();
 
       try {
-        const analysis = await commitService.requireStagedChanges();
-        analyzeSpinner.succeed(`${analysis.files.length} file(s) staged`);
+        printAppHeader("Commit Assistant");
 
-        const generateSpinner = ora("Generating commit...").start();
-        let generated: Awaited<
-          ReturnType<CommitService["generateCommitMessage"]>
-        >;
-        try {
-          generated = await commitService.generateCommitMessage(analysis);
-          generateSpinner.succeed("Commit generated");
-        } catch (error) {
-          generateSpinner.fail("Failed to generate commit");
-          throw error;
-        }
-
-        logger.blank();
-        logger.info(chalk.bold("Generated commit:"));
-        logger.info(formatCommitMessage(generated.message));
-        logger.blank();
-        logger.info(formatValidation(generated.validation));
-        logger.blank();
-        logger.info(formatScore(generated.score));
-        logger.blank();
-
-        const confirmed = await commitService.confirm(
-          "Create this commit? (Y/n) ",
+        const analysis = await withSpinner(
+          "Analyzing staged changes...",
+          () => commitService.requireStagedChanges(),
+          (result) => `${result.files.length} file(s) staged`,
+          "Analyze failed",
         );
 
-        if (!confirmed) {
-          logger.warn("Commit cancelled.");
+        status.blank();
+        status.info(formatCommitSummaryPanel(analysis));
+        status.blank();
+
+        const candidates = await withSpinner(
+          "Generating commit candidates...",
+          () => commitService.generateCommitCandidates(analysis),
+          (result) => `${result.length} candidates ready`,
+          "Failed to generate commit",
+        );
+
+        status.blank();
+        status.muted("↑↓ Navigate   Enter Select");
+        status.blank();
+
+        const selected = await selectOption<CommitCandidate>(
+          "Choose a commit message",
+          candidates.map((candidate) => ({
+            name: candidate.message,
+            value: candidate,
+            description: `Score ${candidate.score.score}/100${
+              candidate.validation.valid ? "" : " · needs review"
+            }`,
+          })),
+        );
+
+        if (!selected) {
+          status.warn("Commit cancelled.");
           return;
         }
 
-        const createSpinner = ora("Creating commit...").start();
-        try {
-          await commitService.createCommit(generated.message);
-          createSpinner.succeed("Commit created successfully.");
-        } catch (error) {
-          createSpinner.fail("Failed to create commit");
-          throw error;
+        status.blank();
+        status.info(formatSelectedCommitPanel(selected));
+        status.blank();
+
+        const confirmed = await confirmAction("Create this commit?", true);
+        if (!confirmed) {
+          status.warn("Commit cancelled.");
+          return;
         }
+
+        await withSpinner(
+          "Creating commit...",
+          () => commitService.createCommit(selected.message),
+          "Commit created successfully",
+          "Failed to create commit",
+        );
+
+        status.blank();
       } catch (error) {
-        if (analyzeSpinner.isSpinning) {
-          analyzeSpinner.fail("Commit workflow failed");
-        }
         const message = sanitizeErrorMessage(getErrorMessage(error));
-        logger.error(message);
+        status.error(message);
         process.exitCode = isAppError(error) ? error.exitCode : 1;
       }
     });
