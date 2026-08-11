@@ -33,3 +33,16 @@ export interface CommitInfo {
   date: string;
   body: string;
 }
+
+export interface CommitChangeFile {
+  path: string;
+  status: string;
+}
+
+export interface CommitDetails {
+  commit: CommitInfo;
+  diff: string;
+  files: CommitChangeFile[];
+  stats: DiffStats;
+  diffTruncated: boolean;
+}

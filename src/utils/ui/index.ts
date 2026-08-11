@@ -13,3 +13,8 @@ export {
   confirmAction,
   type SelectOption,
 } from "./selection.js";
+export {
+  selectExplainMode,
+  selectCommitFromList,
+  type ExplainMode,
+} from "./commit-selection.js";

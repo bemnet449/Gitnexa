@@ -180,46 +180,115 @@ export function formatHistoryView(commits: CommitInfo[]): string {
 export function formatExplainView(
   commit: CommitInfo,
   explanation: string,
-  affectedAreas: string[],
+  files: string[],
+  stats: { filesChanged: number; insertions: number; deletions: number },
+  options: { diffTruncated?: boolean } = {},
 ): string {
-  const panel = renderPanel(
-    "Commit Explanation",
-    [theme.hash(commit.shortHash), theme.highlight(commit.message)],
-    48,
+  const width = 48;
+  const dateLabel = formatDisplayDate(commit.date);
+  const messageLines = wrapPlainText(commit.message, width - 4).map((line) =>
+    theme.highlight(line),
   );
 
-  const parts = [panel, "", explanation.trim()];
+  const header = renderPanel(
+    "GitSense · Commit Explanation",
+    [
+      "",
+      theme.hash(commit.shortHash),
+      ...messageLines,
+      "",
+      `${theme.muted("Author".padEnd(8))}  ${commit.author}`,
+      `${theme.muted("Date".padEnd(8))}  ${dateLabel}`,
+    ],
+    width,
+  );
 
-  if (affectedAreas.length > 0) {
-    parts.push("");
-    parts.push(theme.brandBold("Affected areas"));
-    for (const area of affectedAreas) {
-      parts.push(`${theme.muted("•")} ${area}`);
+  const sections: string[] = [header, ""];
+
+  sections.push(theme.brandBold("What changed"));
+  sections.push(theme.border("─".repeat(44)));
+  sections.push("");
+  sections.push(wrapPlainText(explanation.trim(), 44).join("\n"));
+
+  if (options.diffTruncated) {
+    sections.push("");
+    sections.push(
+      theme.muted(
+        "Note: explanation is based on a truncated or limited diff.",
+      ),
+    );
+  }
+
+  if (files.length > 0) {
+    sections.push("");
+    sections.push(theme.brandBold("Affected files"));
+    sections.push(theme.border("─".repeat(44)));
+    sections.push("");
+    for (const file of files.slice(0, 12)) {
+      sections.push(`  ${file}`);
+    }
+    if (files.length > 12) {
+      sections.push(theme.muted(`  …and ${files.length - 12} more`));
     }
   }
 
-  return parts.join("\n");
+  if (
+    stats.filesChanged > 0 ||
+    stats.insertions > 0 ||
+    stats.deletions > 0
+  ) {
+    sections.push("");
+    sections.push(theme.brandBold("Change summary"));
+    sections.push(theme.border("─".repeat(44)));
+    sections.push("");
+    sections.push(`  ${theme.add(`+${stats.insertions}`)} additions`);
+    sections.push(`  ${theme.remove(`-${stats.deletions}`)} deletions`);
+    sections.push(
+      `  ${stats.filesChanged} file${stats.filesChanged === 1 ? "" : "s"} changed`,
+    );
+  }
+
+  return sections.join("\n");
 }
 
-export function extractAffectedAreas(diff: string): string[] {
+export function formatDisplayDate(dateInput: string): string {
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) {
+    return dateInput;
+  }
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export function extractAffectedFiles(diff: string): string[] {
   const paths = new Set<string>();
   const patterns = [
-    /^diff --git a\/(.+?) b\//gm,
+    /^diff --git a\/(.+?) b\/(.+)$/gm,
     /^\+\+\+ b\/(.+)$/gm,
-    /^--- a\/(.+)$/gm,
   ];
 
   for (const pattern of patterns) {
     for (const match of diff.matchAll(pattern)) {
-      const filePath = match[1];
+      const filePath = match[2] ?? match[1];
       if (filePath && filePath !== "/dev/null") {
-        const parts = filePath.split("/");
-        const area = parts.length > 1 ? `${parts[0]}/` : filePath;
-        paths.add(area);
+        paths.add(filePath);
       }
     }
   }
 
+  return [...paths];
+}
+
+export function extractAffectedAreas(diff: string): string[] {
+  const paths = new Set<string>();
+  for (const filePath of extractAffectedFiles(diff)) {
+    const parts = filePath.split("/");
+    const area = parts.length > 1 ? `${parts[0]}/` : filePath;
+    paths.add(area);
+  }
   return [...paths].slice(0, 8);
 }
 

@@ -2,6 +2,8 @@ import path from "node:path";
 import { simpleGit, type SimpleGit, type StatusResult } from "simple-git";
 import { AppError } from "../utils/errors.js";
 import type {
+  CommitChangeFile,
+  CommitDetails,
   CommitInfo,
   DiffStats,
   RepoInfo,
@@ -265,22 +267,93 @@ export class GitService {
         body,
       };
     } catch {
-      throw new AppError(
-        `Could not find commit: ${ref}`,
-        "COMMIT_NOT_FOUND",
-      );
+      throw new AppError(`Commit not found: ${ref}`, "COMMIT_NOT_FOUND");
     }
   }
 
   async getCommitDiff(ref: string): Promise<string> {
     await this.ensureRepository();
     try {
-      return await this.git.show([`${ref}`, "--stat", "--format="]);
+      // Patch only — omit commit metadata for cleaner AI context.
+      return await this.git.show(["--format=", "--patch", ref]);
     } catch {
       throw new AppError(
         `Could not read diff for commit: ${ref}`,
         "COMMIT_DIFF_FAILED",
       );
     }
+  }
+
+  async getCommitChangedFiles(ref: string): Promise<CommitChangeFile[]> {
+    await this.ensureRepository();
+    try {
+      const raw = await this.git.raw([
+        "diff-tree",
+        "--no-commit-id",
+        "--name-status",
+        "-r",
+        "--root",
+        ref,
+      ]);
+
+      return raw
+        .trim()
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [status = "M", ...pathParts] = line.split(/\s+/);
+          const path = pathParts.join(" ").trim();
+          return { status, path };
+        })
+        .filter((file) => file.path.length > 0);
+    } catch {
+      return [];
+    }
+  }
+
+  async getCommitStats(ref: string): Promise<DiffStats> {
+    await this.ensureRepository();
+    try {
+      const raw = await this.git.show(["--format=", "--numstat", ref]);
+      let insertions = 0;
+      let deletions = 0;
+      let filesChanged = 0;
+
+      for (const line of raw.trim().split("\n")) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        const [added = "0", removed = "0"] = trimmed.split(/\t/);
+        // Binary files show "-" for counts.
+        if (added !== "-") {
+          insertions += Number.parseInt(added, 10) || 0;
+        }
+        if (removed !== "-") {
+          deletions += Number.parseInt(removed, 10) || 0;
+        }
+        filesChanged += 1;
+      }
+
+      return { filesChanged, insertions, deletions };
+    } catch {
+      return { filesChanged: 0, insertions: 0, deletions: 0 };
+    }
+  }
+
+  async getCommitDetails(ref: string): Promise<CommitDetails> {
+    const commit = await this.getCommit(ref);
+    const [diff, files, stats] = await Promise.all([
+      this.getCommitDiff(commit.hash),
+      this.getCommitChangedFiles(commit.hash),
+      this.getCommitStats(commit.hash),
+    ]);
+
+    return {
+      commit,
+      diff,
+      files,
+      stats,
+      diffTruncated: false,
+    };
   }
 }

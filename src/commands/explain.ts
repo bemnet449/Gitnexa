@@ -1,19 +1,15 @@
 import type { Command } from "commander";
-import { GitService } from "../services/git.service.js";
-import { AIService } from "../services/ai.service.js";
-import {
-  buildExplainPrompt,
-  parseExplainResponse,
-} from "../prompts/explain.prompt.js";
-import {
-  extractAffectedAreas,
-  formatExplainView,
-} from "../utils/formatter.js";
+import { ExplainService } from "../services/explain.service.js";
+import { formatExplainView } from "../utils/formatter.js";
 import {
   printAppHeader,
   status,
   withSpinner,
 } from "../utils/ui/index.js";
+import {
+  selectCommitFromList,
+  selectExplainMode,
+} from "../utils/ui/commit-selection.js";
 import {
   getErrorMessage,
   isAppError,
@@ -24,40 +20,66 @@ export function explainCommand(program: Command): void {
   program
     .command("explain")
     .description("Explain a Git commit in simple technical language")
-    .argument("[ref]", "Commit reference (default: HEAD)", "HEAD")
-    .action(async (ref: string) => {
+    .argument(
+      "[ref]",
+      "Commit hash or ref. Omit to choose interactively.",
+    )
+    .action(async (ref?: string) => {
+      const explainService = new ExplainService();
+
       try {
         printAppHeader("Explain");
 
-        const git = new GitService();
-        const ai = new AIService();
+        await explainService.ensureRepository();
 
-        const { commit, diff } = await withSpinner(
-          `Loading commit ${ref}...`,
-          async () => {
-            const commitInfo = await git.getCommit(ref);
-            const commitDiff = await git.getCommitDiff(ref);
-            return { commit: commitInfo, diff: commitDiff };
-          },
-          (result) => `Loaded ${result.commit.shortHash}`,
+        let targetRef = ref?.trim() || "";
+
+        if (!targetRef) {
+          const mode = await selectExplainMode();
+          if (!mode) {
+            status.warn("Explain cancelled.");
+            return;
+          }
+
+          if (mode === "last") {
+            targetRef = "HEAD";
+          } else {
+            const commits = await withSpinner(
+              "Loading recent commits...",
+              () => explainService.getRecentCommits(15),
+              (list) => `${list.length} commit(s) available`,
+              "Failed to load commits",
+            );
+
+            status.blank();
+            const selected = await selectCommitFromList(commits);
+            if (!selected) {
+              status.warn("Explain cancelled.");
+              return;
+            }
+            targetRef = selected;
+          }
+        }
+
+        const result = await withSpinner(
+          `Explaining ${targetRef}...`,
+          () => explainService.explainCommit(targetRef),
+          (res) => `Explained ${res.details.commit.shortHash}`,
           "Explain failed",
         );
 
-        const explanation = await withSpinner(
-          "Generating explanation...",
-          async () => {
-            const prompt = buildExplainPrompt(commit, diff);
-            const response = await ai.generate(prompt, { temperature: 0.3 });
-            return parseExplainResponse(response.text);
-          },
-          "Explanation ready",
-          "Failed to generate explanation",
-        );
-
-        const affected = extractAffectedAreas(diff);
+        const filePaths = result.details.files.map((file) => file.path);
 
         status.blank();
-        status.info(formatExplainView(commit, explanation, affected));
+        status.info(
+          formatExplainView(
+            result.details.commit,
+            result.explanation,
+            filePaths,
+            result.details.stats,
+            { diffTruncated: result.details.diffTruncated },
+          ),
+        );
         status.blank();
       } catch (error) {
         const message = sanitizeErrorMessage(getErrorMessage(error));
