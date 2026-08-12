@@ -8,6 +8,7 @@ export {
 export { renderAppHeader, printAppHeader } from "./header.js";
 export { createSpinner, withSpinner } from "./spinner.js";
 export { status } from "./status.js";
+export { getTerminalWidth } from "./terminal.js";
 export {
   selectOption,
   confirmAction,

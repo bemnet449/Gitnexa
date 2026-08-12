@@ -7,6 +7,7 @@ import type {
 } from "../types/commit.types.js";
 import { theme } from "./ui/theme.js";
 import { renderKeyValuePanel, renderPanel } from "./ui/panel.js";
+import { getTerminalWidth } from "./ui/terminal.js";
 
 export function fileStatusIcon(indexStatus: string): string {
   switch (indexStatus) {
@@ -184,7 +185,7 @@ export function formatExplainView(
   stats: { filesChanged: number; insertions: number; deletions: number },
   options: { diffTruncated?: boolean } = {},
 ): string {
-  const width = 48;
+  const width = getTerminalWidth();
   const dateLabel = formatDisplayDate(commit.date);
   const messageLines = wrapPlainText(commit.message, width - 4).map((line) =>
     theme.highlight(line),
@@ -203,12 +204,13 @@ export function formatExplainView(
     width,
   );
 
+  const divider = theme.border("─".repeat(width));
   const sections: string[] = [header, ""];
 
   sections.push(theme.brandBold("What changed"));
-  sections.push(theme.border("─".repeat(44)));
+  sections.push(divider);
   sections.push("");
-  sections.push(wrapPlainText(explanation.trim(), 44).join("\n"));
+  sections.push(wrapPlainText(explanation.trim(), width).join("\n"));
 
   if (options.diffTruncated) {
     sections.push("");
@@ -222,7 +224,7 @@ export function formatExplainView(
   if (files.length > 0) {
     sections.push("");
     sections.push(theme.brandBold("Affected files"));
-    sections.push(theme.border("─".repeat(44)));
+    sections.push(divider);
     sections.push("");
     for (const file of files.slice(0, 12)) {
       sections.push(`  ${file}`);
@@ -239,7 +241,7 @@ export function formatExplainView(
   ) {
     sections.push("");
     sections.push(theme.brandBold("Change summary"));
-    sections.push(theme.border("─".repeat(44)));
+    sections.push(divider);
     sections.push("");
     sections.push(`  ${theme.add(`+${stats.insertions}`)} additions`);
     sections.push(`  ${theme.remove(`-${stats.deletions}`)} deletions`);
