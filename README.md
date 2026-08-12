@@ -55,8 +55,19 @@ git clone https://github.com/gitsense/gitsense.git
 cd gitsense
 npm install
 npm run build
+npm run link
+```
+
+This registers the `gitsense` command globally. On Windows, use `npm run link` instead of plain `npm link` to avoid `EPERM` when npm tries to write under `C:\Program Files\nodejs\`.
+
+If you prefer plain `npm link`, set a user-writable npm prefix once (no admin required), then open a new terminal:
+
+```powershell
+npm config set prefix "$env:APPDATA\npm"
 npm link
 ```
+
+Ensure `%APPDATA%\npm` is on your PATH (default Node.js Windows install).
 
 ### Eventually via npm
 

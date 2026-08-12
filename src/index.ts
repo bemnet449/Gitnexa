@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import { config as loadEnv } from "dotenv";
 import { Command } from "commander";
 import { APP_NAME, APP_VERSION } from "./config/constants.js";
+import { loadGitSenseEnv } from "./config/env.js";
 import { analyzeCommand } from "./commands/analyze.js";
 import { commitCommand } from "./commands/commit.js";
 import { historyCommand } from "./commands/history.js";
 import { explainCommand } from "./commands/explain.js";
 
-loadEnv({ quiet: true });
+loadGitSenseEnv();
 
 const program = new Command();
 
