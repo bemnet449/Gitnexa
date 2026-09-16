@@ -1,4 +1,5 @@
 import { theme } from "./theme.js";
+import { getTerminalWidth } from "./terminal.js";
 
 const DEFAULT_WIDTH = 44;
 
@@ -16,7 +17,7 @@ function padLine(content: string, innerWidth: number): string {
 export function renderPanel(
   title: string,
   lines: string[],
-  width = DEFAULT_WIDTH,
+  width = Math.min(80, Math.max(DEFAULT_WIDTH, getTerminalWidth())),
 ): string {
   const innerWidth = Math.max(width - 2, 20);
   const titleText = title ? ` ${title} ` : "";
@@ -46,7 +47,7 @@ export function renderPanel(
 export function renderKeyValuePanel(
   title: string,
   rows: Array<{ key: string; value: string }>,
-  width = DEFAULT_WIDTH,
+  width = Math.min(80, Math.max(DEFAULT_WIDTH, getTerminalWidth())),
 ): string {
   const keyWidth = Math.max(10, ...rows.map((r) => r.key.length));
   const lines = rows.map((row) => {
@@ -59,7 +60,7 @@ export function renderKeyValuePanel(
 export function printPanel(
   title: string,
   lines: string[],
-  width = DEFAULT_WIDTH,
+  width = Math.min(80, Math.max(DEFAULT_WIDTH, getTerminalWidth())),
 ): void {
   console.log(renderPanel(title, lines, width));
 }
@@ -67,7 +68,7 @@ export function printPanel(
 export function printKeyValuePanel(
   title: string,
   rows: Array<{ key: string; value: string }>,
-  width = DEFAULT_WIDTH,
+  width = Math.min(80, Math.max(DEFAULT_WIDTH, getTerminalWidth())),
 ): void {
   console.log(renderKeyValuePanel(title, rows, width));
 }

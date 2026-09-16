@@ -1,6 +1,5 @@
 import { theme } from "./theme.js";
-
-const WIDTH = 44;
+import { getTerminalWidth } from "./terminal.js";
 
 function center(text: string, width: number): string {
   const pad = Math.max(0, Math.floor((width - text.length) / 2));
@@ -10,6 +9,7 @@ function center(text: string, width: number): string {
 export function renderAppHeader(
   subtitle = "AI-powered Git assistant",
 ): string {
+  const WIDTH = Math.min(80, Math.max(44, getTerminalWidth()));
   const inner = WIDTH - 2;
   const top = theme.border("╭" + "─".repeat(inner) + "╮");
   const titleLine =

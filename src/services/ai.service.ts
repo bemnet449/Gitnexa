@@ -131,7 +131,12 @@ export class AIService {
 
     const rawBody = await response.text();
     let parsed: {
-      error?: { message?: string };
+      error?: {
+        message?: string;
+        metadata?: {
+          raw?: unknown;
+        };
+      };
       choices?: Array<{ message?: { content?: string | null } }>;
     };
 
@@ -145,9 +150,17 @@ export class AIService {
     }
 
     if (!response.ok) {
-      const detail = sanitizeErrorMessage(
-        parsed.error?.message ?? `HTTP ${response.status}`,
-      );
+      let msg = parsed.error?.message ?? `HTTP ${response.status}`;
+      const raw = parsed.error?.metadata?.raw;
+      if (raw) {
+        try {
+          // Pretty-print parsed json if possible
+          msg += ` - Detailed reason: ${typeof raw === "string" ? raw : JSON.stringify(raw)}`;
+        } catch {
+          msg += ` - Detailed reason: ${String(raw)}`;
+        }
+      }
+      const detail = sanitizeErrorMessage(msg);
       throw new AppError(`AI API failure: ${detail}`, "AI_FAILURE");
     }
 

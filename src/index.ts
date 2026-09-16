@@ -6,6 +6,7 @@ import { analyzeCommand } from "./commands/analyze.js";
 import { commitCommand } from "./commands/commit.js";
 import { historyCommand } from "./commands/history.js";
 import { explainCommand } from "./commands/explain.js";
+import { setupCommand } from "./commands/setup.js";
 
 loadGitSenseEnv();
 
@@ -22,6 +23,7 @@ analyzeCommand(program);
 commitCommand(program);
 historyCommand(program);
 explainCommand(program);
+setupCommand(program);
 
 program.parseAsync(process.argv).catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
