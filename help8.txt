@@ -1,0 +1,17 @@
+﻿Usage: gitzap [options] [command]
+
+AI-powered Git assistant ΓÇö analyze staged changes, generate Conventional
+Commits, and explain history.
+
+Options:
+  -V, --version      output the version number
+  -h, --help         display help for command
+
+Commands:
+  analyze            Analyze staged Git changes
+  commit             Generate AI Conventional Commit candidates from staged
+                     changes
+  history [options]  Show recent Git commits
+  explain [ref]      Explain a Git commit in simple technical language
+  setup              Configure or update your AI provider API key and model
+  help [command]     display help for command

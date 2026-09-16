@@ -51,7 +51,7 @@ export function formatAnalyzeView(analysis: StagedAnalysis): string {
       ? theme.warn("No staged files")
       : `${analysis.files.length} staged file${analysis.files.length === 1 ? "" : "s"}`;
 
-  const header = renderKeyValuePanel("GitSense", [
+  const header = renderKeyValuePanel("Gitzap", [
     { key: "Repository", value: analysis.repo.name },
     { key: "Branch", value: analysis.repo.branch },
     { key: "Status", value: statusText },
@@ -138,10 +138,9 @@ export function formatSelectedCommitPanel(candidate: CommitCandidate): string {
     `${theme.muted("Score".padEnd(10))}  ${scoreColor(`${candidate.score.score}/${candidate.score.maxScore}`)}`,
     `${theme.muted("Type".padEnd(10))}  ${candidate.validation.type ?? theme.warn("—")}`,
     `${theme.muted("Scope".padEnd(10))}  ${candidate.validation.scope ?? theme.muted("—")}`,
-    `${theme.muted("Status".padEnd(10))}  ${
-      candidate.validation.valid
-        ? theme.success("✓ Valid")
-        : theme.error("✗ Invalid")
+    `${theme.muted("Status".padEnd(10))}  ${candidate.validation.valid
+      ? theme.success("✓ Valid")
+      : theme.error("✗ Invalid")
     }`,
   ];
 
@@ -175,7 +174,7 @@ export function formatHistoryView(commits: CommitInfo[]): string {
     return `${hash}   ${message}\n${" ".repeat(10)}${meta}`;
   });
 
-  return [theme.brandBold("GitSense History"), "", ...blocks].join("\n\n");
+  return [theme.brandBold("Gitzap History"), "", ...blocks].join("\n\n");
 }
 
 export function formatExplainView(
@@ -192,7 +191,7 @@ export function formatExplainView(
   );
 
   const header = renderPanel(
-    "GitSense · Commit Explanation",
+    "Gitzap · Commit Explanation",
     [
       "",
       theme.hash(commit.shortHash),

@@ -1,11 +1,11 @@
 {
-  "name": "gitsense",
-  "version": "1.0.0",
-  "description": "AI-powered Git CLI assistant that analyzes staged changes, generates Conventional Commits with Gemini, validates and scores them, and creates commits with your confirmation.",
+  "name": "gitzap",
+  "version": "1.1.0",
+  "description": "AI-powered Git CLI assistant that analyzes staged changes, generates Conventional Commit messages, validates and scores them, and creates commits with your confirmation.",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "gitsense": "./dist/index.js"
+    "gitzap": "./dist/index.js"
   },
   "files": [
     "dist",
@@ -31,21 +31,22 @@
     "conventional-commits",
     "ai",
     "gemini",
-    "gitsense"
+    "openrouter",
+    "gitzap"
   ],
-  "author": "GitSense Contributors",
+  "author": "Bemnet",
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gitsense/gitsense.git"
+    "url": "https://github.com/bemnet449/Gitzap.git"
   },
   "bugs": {
-    "url": "https://github.com/gitsense/gitsense/issues"
+    "url": "https://github.com/bemnet449/Gitzap/issues"
   },
-  "homepage": "https://github.com/gitsense/gitsense#readme",
+  "homepage": "https://github.com/bemnet449/Gitzap#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@inquirer/prompts": "^8.5.2",

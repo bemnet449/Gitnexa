@@ -1,4 +1,4 @@
-export const APP_NAME = "gitsense";
+export const APP_NAME = "gitzap";
 export const APP_VERSION = "1.0.0";
 
 export const DEFAULT_HISTORY_LIMIT = 10;

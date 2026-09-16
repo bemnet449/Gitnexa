@@ -50,7 +50,7 @@ export function setupCommand(program: Command): void {
     .action(async () => {
       try {
         printAppHeader();
-        status.section("GitSense Setup");
+        status.section("Gitzap Setup");
 
         const existing = readExistingConfig();
 
@@ -129,7 +129,7 @@ export function setupCommand(program: Command): void {
         status.info(`Detected provider: ${provider}`);
         status.info(`Model: ${model}`);
         status.blank();
-        status.tip("Run `gitsense analyze` or `gitsense commit` inside any Git repo to get started.");
+        status.tip("Run `gitzap analyze` or `gitzap commit` inside any Git repo to get started.");
       } catch (error) {
         status.error(getErrorMessage(error));
         process.exitCode = 1;
