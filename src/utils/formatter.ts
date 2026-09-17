@@ -51,7 +51,7 @@ export function formatAnalyzeView(analysis: StagedAnalysis): string {
       ? theme.warn("No staged files")
       : `${analysis.files.length} staged file${analysis.files.length === 1 ? "" : "s"}`;
 
-  const header = renderKeyValuePanel("Gitzap", [
+  const header = renderKeyValuePanel("Gitnexa", [
     { key: "Repository", value: analysis.repo.name },
     { key: "Branch", value: analysis.repo.branch },
     { key: "Status", value: statusText },
@@ -174,7 +174,7 @@ export function formatHistoryView(commits: CommitInfo[]): string {
     return `${hash}   ${message}\n${" ".repeat(10)}${meta}`;
   });
 
-  return [theme.brandBold("Gitzap History"), "", ...blocks].join("\n\n");
+  return [theme.brandBold("Gitnexa History"), "", ...blocks].join("\n\n");
 }
 
 export function formatExplainView(
@@ -191,7 +191,7 @@ export function formatExplainView(
   );
 
   const header = renderPanel(
-    "Gitzap · Commit Explanation",
+    "Gitnexa · Commit Explanation",
     [
       "",
       theme.hash(commit.shortHash),

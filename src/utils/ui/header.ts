@@ -14,7 +14,7 @@ export function renderAppHeader(
   const top = theme.border("╭" + "─".repeat(inner) + "╮");
   const titleLine =
     theme.border("│") +
-    theme.brandBold(center("Gitzap", inner).padEnd(inner)) +
+    theme.brandBold(center("Gitnexa", inner).padEnd(inner)) +
     theme.border("│");
   const subLine =
     theme.border("│") +

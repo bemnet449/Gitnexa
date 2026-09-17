@@ -1,0 +1,227 @@
+﻿
+> gitnexa@1.1.0 prepare
+> npm run build
+
+
+> gitnexa@1.1.0 build
+> tsc
+
+node.exe : npm notice
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Users\HP\AppData\Roaming\npm ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (npm notice:String) [], RemoteExceptio  
+  n
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+npm notice ≡ƒôª  gitnexa@1.1.0
+npm notice Tarball Contents
+npm notice 395B .env.example
+npm notice 842B CHANGELOG.md
+npm notice 1.1kB LICENSE
+npm notice 1.4kB README.md
+npm notice 143B dist/commands/analyze.d.ts
+npm notice 219B 
+dist/commands/analyze.d.ts.map
+npm notice 1.4kB dist/commands/analyze.js
+npm notice 1.3kB 
+dist/commands/analyze.js.map
+npm notice 141B dist/commands/commit.d.ts
+npm notice 218B 
+dist/commands/commit.d.ts.map
+npm notice 2.5kB dist/commands/commit.js
+npm notice 2.3kB dist/commands/commit.js.map
+npm notice 143B dist/commands/explain.d.ts
+npm notice 220B 
+dist/commands/explain.d.ts.map
+npm notice 2.5kB dist/commands/explain.js
+npm notice 2.3kB 
+dist/commands/explain.js.map
+npm notice 143B dist/commands/history.d.ts
+npm notice 219B 
+dist/commands/history.d.ts.map
+npm notice 1.5kB dist/commands/history.js
+npm notice 1.4kB 
+dist/commands/history.js.map
+npm notice 139B dist/commands/setup.d.ts
+npm notice 216B dist/commands/setup.d.ts.map
+npm notice 5.1kB dist/commands/setup.js
+npm notice 4.6kB dist/commands/setup.js.map
+npm notice 972B dist/config/constants.d.ts
+npm notice 530B 
+dist/config/constants.d.ts.map
+npm notice 916B dist/config/constants.js
+npm notice 829B dist/config/constants.js.map
+npm notice 342B dist/config/env.d.ts
+npm notice 157B dist/config/env.d.ts.map
+npm notice 953B dist/config/env.js
+npm notice 857B dist/config/env.js.map
+npm notice 66B dist/index.d.ts
+npm notice 104B dist/index.d.ts.map
+npm notice 1.0kB dist/index.js
+npm notice 1.1kB dist/index.js.map
+npm notice 600B 
+dist/prompts/commit.prompt.d.ts
+npm notice 410B 
+dist/prompts/commit.prompt.d.ts.map
+npm notice 5.7kB 
+dist/prompts/commit.prompt.js
+npm notice 4.1kB 
+dist/prompts/commit.prompt.js.map
+npm notice 294B 
+dist/prompts/explain.prompt.d.ts
+npm notice 363B 
+dist/prompts/explain.prompt.d.ts.map
+npm notice 2.2kB 
+dist/prompts/explain.prompt.js
+npm notice 1.1kB 
+dist/prompts/explain.prompt.js.map
+npm notice 561B 
+dist/services/ai.service.d.ts
+npm notice 495B 
+dist/services/ai.service.d.ts.map
+npm notice 5.1kB dist/services/ai.service.js
+npm notice 4.2kB 
+dist/services/ai.service.js.map
+npm notice 1.1kB 
+dist/services/commit.service.d.ts
+npm notice 880B 
+dist/services/commit.service.d.ts.map
+npm notice 2.6kB 
+dist/services/commit.service.js
+npm notice 2.3kB 
+dist/services/commit.service.js.map
+npm notice 675B 
+dist/services/explain.service.d.ts
+npm notice 656B 
+dist/services/explain.service.d.ts.map
+npm notice 1.6kB 
+dist/services/explain.service.js
+npm notice 1.6kB 
+dist/services/explain.service.js.map
+npm notice 1.4kB 
+dist/services/git.service.d.ts
+npm notice 1.3kB 
+dist/services/git.service.d.ts.map
+npm notice 9.7kB 
+dist/services/git.service.js
+npm notice 9.4kB 
+dist/services/git.service.js.map
+npm notice 304B 
+dist/services/history.service.d.ts
+npm notice 362B 
+dist/services/history.service.d.ts.map
+npm notice 375B 
+dist/services/history.service.js
+npm notice 429B 
+dist/services/history.service.js.map
+npm notice 183B 
+dist/services/score.service.d.ts
+npm notice 244B 
+dist/services/score.service.d.ts.map
+npm notice 3.4kB 
+dist/services/score.service.js
+npm notice 3.3kB 
+dist/services/score.service.js.map
+npm notice 204B dist/types/ai.types.d.ts
+npm notice 286B dist/types/ai.types.d.ts.map
+npm notice 47B dist/types/ai.types.js
+npm notice 117B dist/types/ai.types.js.map
+npm notice 683B dist/types/commit.types.d.ts
+npm notice 753B 
+dist/types/commit.types.d.ts.map
+npm notice 51B dist/types/commit.types.js
+npm notice 125B 
+dist/types/commit.types.js.map
+npm notice 890B dist/types/git.types.d.ts
+npm notice 1.0kB 
+dist/types/git.types.d.ts.map
+npm notice 48B dist/types/git.types.js
+npm notice 119B dist/types/git.types.js.map
+npm notice 484B dist/utils/errors.d.ts
+npm notice 453B dist/utils/errors.d.ts.map
+npm notice 966B dist/utils/errors.js
+npm notice 881B dist/utils/errors.js.map
+npm notice 1.6kB dist/utils/formatter.d.ts
+npm notice 1.4kB 
+dist/utils/formatter.d.ts.map
+npm notice 9.6kB dist/utils/formatter.js
+npm notice 12.0kB 
+dist/utils/formatter.js.map
+npm notice 257B dist/utils/logger.d.ts
+npm notice 260B dist/utils/logger.d.ts.map
+npm notice 498B dist/utils/logger.js
+npm notice 725B dist/utils/logger.js.map
+npm notice 491B 
+dist/utils/ui/commit-selection.d.ts
+npm notice 421B 
+dist/utils/ui/commit-selection.d.ts.map
+npm notice 1.2kB 
+dist/utils/ui/commit-selection.js
+npm notice 1.2kB 
+dist/utils/ui/commit-selection.js.map
+npm notice 169B dist/utils/ui/header.d.ts
+npm notice 228B 
+dist/utils/ui/header.d.ts.map
+npm notice 1.0kB dist/utils/ui/header.js
+npm notice 1.4kB dist/utils/ui/header.js.map
+npm notice 559B dist/utils/ui/index.d.ts
+npm notice 565B dist/utils/ui/index.d.ts.map
+npm notice 520B dist/utils/ui/index.js
+npm notice 531B dist/utils/ui/index.js.map
+npm notice 491B dist/utils/ui/panel.d.ts
+npm notice 626B dist/utils/ui/panel.d.ts.map
+npm notice 2.1kB dist/utils/ui/panel.js
+npm notice 2.9kB dist/utils/ui/panel.js.map
+npm notice 426B dist/utils/ui/selection.d.ts
+npm notice 471B 
+dist/utils/ui/selection.d.ts.map
+npm notice 1.8kB dist/utils/ui/selection.js
+npm notice 1.7kB 
+dist/utils/ui/selection.js.map
+npm notice 284B dist/utils/ui/spinner.d.ts
+npm notice 427B 
+dist/utils/ui/spinner.d.ts.map
+npm notice 634B dist/utils/ui/spinner.js
+npm notice 792B dist/utils/ui/spinner.js.map
+npm notice 373B dist/utils/ui/status.d.ts
+npm notice 331B 
+dist/utils/ui/status.d.ts.map
+npm notice 921B dist/utils/ui/status.js
+npm notice 1.3kB dist/utils/ui/status.js.map
+npm notice 171B dist/utils/ui/terminal.d.ts
+npm notice 172B 
+dist/utils/ui/terminal.d.ts.map
+npm notice 380B dist/utils/ui/terminal.js
+npm notice 415B 
+dist/utils/ui/terminal.js.map
+npm notice 602B dist/utils/ui/theme.d.ts
+npm notice 162B dist/utils/ui/theme.d.ts.map
+npm notice 420B dist/utils/ui/theme.js
+gitnexa-1.1.0.tgz
+npm notice 626B dist/utils/ui/theme.js.map
+npm notice 212B dist/validators/conventional
+-commit.validator.d.ts
+npm notice 273B dist/validators/conventional
+-commit.validator.d.ts.map
+npm notice 2.6kB dist/validators/conventiona
+l-commit.validator.js
+npm notice 2.4kB dist/validators/conventiona
+l-commit.validator.js.map
+npm notice 1.6kB package.json
+npm notice Tarball Details
+npm notice name: gitnexa
+npm notice version: 1.1.0
+npm notice filename: gitnexa-1.1.0.tgz
+npm notice package size: 42.1 kB
+npm notice unpacked size: 172.4 kB
+npm notice shasum: 
+2bef457f836c8e03e273ae97095422d0eaf2d327
+npm notice integrity: 
+sha512-NrQ4XS6GrWtTl[...]UosegLgE7nXtQ==
+npm notice total files: 133
+npm notice

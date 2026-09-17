@@ -119,8 +119,8 @@ export class AIService {
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/bemnet449/Gitzap",
-        "X-Title": "Gitzap",
+        "HTTP-Referer": "https://github.com/bemnet449/Gitnexa",
+        "X-Title": "Gitnexa",
       },
       body: JSON.stringify({
         model: this.modelName,
