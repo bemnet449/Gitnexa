@@ -1,5 +1,9 @@
 # ⚡ Gitnexa
 
+[![npm version](https://img.shields.io/npm/v/gitnexa)](https://www.npmjs.com/package/gitnexa)
+[![npm downloads](https://img.shields.io/npm/dw/gitnexa)](https://www.npmjs.com/package/gitnexa)
+[![license](https://img.shields.io/npm/l/gitnexa)](./LICENSE)
+
 AI-powered Git assistant for the terminal. Get smart, Conventional Commit messages from your staged changes — reviewed and scored before anything gets committed.
 
 ## Install
@@ -19,7 +23,7 @@ You'll be asked for an API key and, optionally, a model name.
 - Get a key: [Google AI Studio](https://aistudio.google.com/apikey) or [OpenRouter](https://openrouter.ai/keys)
 - No model preference? Use `openrouter/free` — it auto-picks whichever free model is currently available.
 
-Config is saved once to `~/.gitsense/.env` and works across every project on your machine. Run `gitnexa setup` again anytime to update your key or model.
+Config is saved once to a config file in your home directory and works across every project on your machine. Run `gitnexa setup` again anytime to update your key or model.
 
 ## Usage
 
